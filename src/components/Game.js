@@ -4,8 +4,8 @@ import ExitImg from '../static/images/exit.png'
 import ShengZiImg from '../static/images/shengzi.png'
 
 function Game (props) {
-  let {layout, moveStepsNum} = props
-  let ExitImgWidth = document.body.clientWidth * 0.92 * 0.5 + 'px'
+  let {layout, moveStepsNum, handleClick, handleTouchStart, handleTouchMove, handleTouchEnd, startPos, moveToPos, moveDirection} = props
+  let ExitImgWidth = document.body.clientWidth * 0.76 * 0.5 + 'px'
   
   return (
     <div className="game">
@@ -22,7 +22,15 @@ function Game (props) {
       </div>
       {/*棋盘*/}
       <div className="board-area">
-        <Board layout={layout}/>
+        <Board layout={layout}
+               handleClick={handleClick}
+               handleTouchStart={handleTouchStart}
+               handleTouchMove={handleTouchMove}
+               handleTouchEnd={handleTouchEnd}
+               startPos={startPos}
+               moveToPos={moveToPos}
+               moveDirection={moveDirection}
+        />
         <img src={ExitImg} alt=""
              className="exit-img"
              style={{

@@ -18,6 +18,7 @@ body {
   align-items: center;
   background-image: url("./static/images/bg.jpg");
   background-size: cover;
+  position: relative;
 
   .game-name {
     width: 100%;
@@ -44,6 +45,9 @@ body {
   }
 
   .move-steps-num {
+    position: absolute;
+    top: 10px;
+    right: 30px;
     text-align: center;
     margin-bottom: 4px;
 
@@ -62,15 +66,17 @@ body {
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
+    margin-top: 10px;
 
     .board {
-      width: 92%;
+      width: 76%;
       background-color: red;
       display: flex;
       flex-direction: row;
       flex-wrap: wrap;
       justify-content: flex-start;
       align-items: center;
+      box-sizing: content-box;
       border: 6px solid #662e1e;
       border-radius: 6px;
       background-image: url("./static/images/exit.png");

@@ -16,8 +16,8 @@ import ZhaoYun_2 from '../static/images/zhaoyun_2.png'
 import Bing_1 from '../static/images/bing_1.png'
 
 function Square (props) {
-  let {name, id} = props
-  let width = (document.body.clientWidth * 0.92) / 4 + 'px'
+  let {name, id, handleClick, handleTouchStart, handleTouchMove, handleTouchEnd, startPos, moveToPos, moveDirection} = props
+  let width = (document.body.clientWidth * 0.76) / 4 + 'px'
   let imageSrc = 'linear-gradient(#7d4536, #662e1e)'
   if (name === 'zhangfei' && id === 1) {
     imageSrc = ZhangFei_1
@@ -56,7 +56,6 @@ function Square (props) {
          style={{
            width: width,
            height: width,
-           // backgroundImage: 'linear-gradient(#7d4536, #662e1e)'
          }}
     >
       <img src={imageSrc} alt=""
@@ -65,6 +64,10 @@ function Square (props) {
              height: width,
              display: imageSrc ? 'block' : 'none'
            }}
+           onTouchStart={(e) => handleTouchStart(e, name, id)}
+           onTouchMove={(e) => handleTouchMove(e, name, id)}
+           onTouchEnd={(e) => handleTouchEnd(e, {name, id, startPos, moveToPos})}
+           onClick={(e) => handleClick(e, name, id)}
       />
     </div>
   )

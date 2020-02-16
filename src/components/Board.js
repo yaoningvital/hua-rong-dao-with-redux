@@ -2,7 +2,7 @@ import React from 'react'
 import Square from './Square'
 
 function Board (props) {
-  let {layout} = props
+  let {layout, handleClick, handleTouchStart, handleTouchMove, handleTouchEnd, startPos, moveToPos, moveDirection} = props
   return (
     <div className="board">
       {
@@ -11,6 +11,13 @@ function Board (props) {
             <Square key={index}
                     name={item ? item.name : null}
                     id={item ? item.id : null}
+                    handleClick={handleClick}
+                    handleTouchStart={handleTouchStart}
+                    handleTouchMove={handleTouchMove}
+                    handleTouchEnd={handleTouchEnd}
+                    startPos={startPos}
+                    moveToPos={moveToPos}
+                    moveDirection={moveDirection}
             />
           ))
         })
