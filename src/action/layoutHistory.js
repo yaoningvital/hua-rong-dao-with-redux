@@ -7,3 +7,9 @@ export function addHistory (newLayout) {
     layout: newLayout
   }
 }
+
+export function popHistory () {
+  return {
+    type: types.POP_HISTORY
+  }
+}

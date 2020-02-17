@@ -8,7 +8,7 @@ function Game (props) {
   let {
     layoutHistory, handleClick, handleTouchStart,
     handleTouchMove, handleTouchEnd, startPos, moveToPos,
-    successful, replay
+    successful, replay, goBack
   } = props
   let ExitImgWidth = document.body.clientWidth * 0.76 * 0.5 + 'px'
   
@@ -44,7 +44,7 @@ function Game (props) {
       </div>
       {/*  按钮*/}
       <div className="btns">
-        <button>返回上一步</button>
+        <button onClick={goBack} disabled={layoutHistory.length === 1}>返回上一步</button>
         <button>重玩</button>
       </div>
       {/*  通关提示层*/}

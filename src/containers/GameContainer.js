@@ -3,7 +3,7 @@ import Game from '../components/Game'
 import { setMoveToPos, setStartPos } from '../action/positions'
 import { setLayout } from '../action/layout'
 import { setSuccessful } from '../action/successful'
-import {addHistory} from '../action/layoutHistory'
+import { addHistory, popHistory } from '../action/layoutHistory'
 import _ from 'lodash'
 import { getBrotherIndex, getCaoCaoIndices, getIndex } from '../utils'
 import { test } from '../utils/layouts'
@@ -27,6 +27,7 @@ const mapDispatchToProps = dispatch => ({
     layout
   }),
   replay: () => handleReplay(dispatch),
+  goBack: () => handleGoBack(dispatch),
 })
 
 function handleClick (e, name, id) {
@@ -275,6 +276,10 @@ function hasSucceed (layout) {
 function handleReplay (dispatch) {
   dispatch(setSuccessful(false))
   dispatch(setLayout(test))
+}
+
+function handleGoBack (dispatch) {
+  dispatch(popHistory())
 }
 
 export default connect(
