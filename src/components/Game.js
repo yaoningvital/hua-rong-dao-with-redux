@@ -2,9 +2,10 @@ import React from 'react'
 import Board from './Board'
 import ExitImg from '../static/images/exit.png'
 import ShengZiImg from '../static/images/shengzi.png'
+import SucceedMask from './SucceedMask'
 
 function Game (props) {
-  let {layout, moveStepsNum, handleClick, handleTouchStart, handleTouchMove, handleTouchEnd, startPos, moveToPos} = props
+  let {layout, moveStepsNum, handleClick, handleTouchStart, handleTouchMove, handleTouchEnd, startPos, moveToPos, successful} = props
   let ExitImgWidth = document.body.clientWidth * 0.76 * 0.5 + 'px'
   
   return (
@@ -42,6 +43,8 @@ function Game (props) {
         <button>返回上一步</button>
         <button>重玩</button>
       </div>
+      {/*  通关提示层*/}
+      <SucceedMask showModal={successful}/>
     </div>
   )
 }

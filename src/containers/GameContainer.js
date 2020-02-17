@@ -2,6 +2,7 @@ import { connect } from 'react-redux'
 import Game from '../components/Game'
 import { setMoveToPos, setStartPos } from '../action/positions'
 import { setLayout } from '../action/layout'
+import { setSuccessful } from '../action/successful'
 import _ from 'lodash'
 import { getBrotherIndex, getCaoCaoIndices, getIndex } from '../utils'
 
@@ -10,7 +11,7 @@ const mapStateToProps = state => ({
   moveStepsNum: state.moveStepsNum,
   startPos: state.startPos,
   moveToPos: state.moveToPos,
-  // moveDirection: state.moveDirection,
+  successful: state.successful,
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -33,6 +34,7 @@ function handleClick (e, name, id) {
 }
 
 function handleTouchStart (dispatch, e, name, id) {
+  console.log('touchStart')
   let startPos = {
     pageX: e.targetTouches[0].pageX,
     pageY: e.targetTouches[0].pageY,
@@ -42,6 +44,7 @@ function handleTouchStart (dispatch, e, name, id) {
 }
 
 function handleTouchMove (dispatch, e, name, id) {
+  console.log('touchMove')
   e.preventDefault()
   // console.log('touchMove e.targetTouches[0].pageX:', e.targetTouches[0].pageX)
   // console.log('touchMove e.targetTouches[0].pageY:', e.targetTouches[0].pageY)
@@ -54,6 +57,7 @@ function handleTouchMove (dispatch, e, name, id) {
 }
 
 function handleTouchEnd (dispatch, e, {name, id, startPos, moveToPos, layout}) {
+  console.log('touchEnd')
   let moveAxis = null
   let moveDirection = null
   let xDistance = startPos.pageX - moveToPos.pageX
@@ -69,6 +73,7 @@ function handleTouchEnd (dispatch, e, {name, id, startPos, moveToPos, layout}) {
       moveDirection = 'left'
     }
   } else if (moveAxis === 'vertical') { // 垂直方向移动
+    // console.log('yDistance:', yDistance)
     if (yDistance < -10) { // 往下移
       console.log('往下移')
       moveDirection = 'bottom'
@@ -79,7 +84,10 @@ function handleTouchEnd (dispatch, e, {name, id, startPos, moveToPos, layout}) {
   }
   
   if (moveDirection) {
-    updateLayout(dispatch, layout, name, id, moveDirection)
+    let newLayout = updateLayout(dispatch, layout, name, id, moveDirection)
+    if (hasSucceed(newLayout)) {
+      dispatch(setSuccessful(true))
+    }
   }
 }
 
@@ -190,6 +198,8 @@ function updateLayout (dispatch, oldLayout, name, id, moveDirection) {
         newLayout[caoCaoIndices[3][0]][caoCaoIndices[3][1] + 1] = _.cloneDeep(newLayout[caoCaoIndices[3][0]][caoCaoIndices[3][1]])
         newLayout[caoCaoIndices[1][0]][caoCaoIndices[1][1]] = _.cloneDeep(newLayout[caoCaoIndices[0][0]][caoCaoIndices[0][1]])
         newLayout[caoCaoIndices[3][0]][caoCaoIndices[3][1]] = _.cloneDeep(newLayout[caoCaoIndices[2][0]][caoCaoIndices[2][1]])
+        newLayout[caoCaoIndices[0][0]][caoCaoIndices[0][1]] = null
+        newLayout[caoCaoIndices[2][0]][caoCaoIndices[2][1]] = null
       }
     } else if (moveDirection === 'top') {
       if (caoCaoIndices[0][0] - 1 >= 0 &&
@@ -246,6 +256,18 @@ function updateLayout (dispatch, oldLayout, name, id, moveDirection) {
   }
   
   dispatch(setLayout(newLayout))
+  return newLayout
+}
+
+/**
+ * 判断当前布局 layout 中，曹操是否已经在曹营的位置，即游戏是否已经通关
+ * @param layout
+ */
+function hasSucceed (layout) {
+  return (layout[3][1] && layout[3][1].name === 'caocao') &&
+    (layout[3][2] && layout[3][2].name === 'caocao') &&
+    (layout[4][1] && layout[4][1].name === 'caocao') &&
+    (layout[4][2] && layout[4][2].name === 'caocao')
 }
 
 export default connect(

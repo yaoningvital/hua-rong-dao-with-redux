@@ -70,7 +70,7 @@ body {
 
     .board {
       width: 76%;
-      background-color: red;
+      background-color: #733c2d;
       display: flex;
       flex-direction: row;
       flex-wrap: wrap;
@@ -79,14 +79,12 @@ body {
       box-sizing: content-box;
       border: 6px solid #662e1e;
       border-radius: 6px;
-      background-image: url("./static/images/exit.png");
-      background-repeat: no-repeat;
       box-shadow: 4px 4px 4px #888;
 
       .square {
-        background-image: linear-gradient(#7d4536, #662e1e);
-
         img {
+          vertical-align: middle;
+          display: block;
         }
       }
     }
@@ -116,5 +114,55 @@ body {
       border-radius: 8px;
       box-shadow: 2px 2px 2px #888;
     }
+  }
+}
+
+.am-modal-wrap {
+  .am-modal.am-modal-transparent {
+    //background-color: #6e3424;
+
+    .am-modal-content {
+      //background-image: linear-gradient(#934f3d, #6e3424);
+      background-color: #874c3b;
+
+      .am-modal-body {
+        .content-wrap {
+          h4 {
+            margin: 12px 0 0 0;
+            font-size: 24px;
+            //color: #4e291b;
+            color: #fff;
+          }
+
+          p {
+            font-size: 18px;
+            margin: 8px 0 18px 0;
+            //color: #4e291b;
+            color: #fff;
+          }
+
+          .btns {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            justify-content: space-around;
+            align-items: center;
+
+            button {
+              font-size: 20px;
+              border-style: none;
+              padding: 8px 12px;
+              color: white;
+              //font-weight: bold;
+              background-image: linear-gradient(#824939, #58291c);
+              border-radius: 6px;
+              //box-shadow: 2px 2px 2px #888;
+            }
+
+          }
+        }
+      }
+    }
+
   }
 }

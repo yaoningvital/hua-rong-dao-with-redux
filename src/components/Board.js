@@ -6,9 +6,9 @@ function Board (props) {
   return (
     <div className="board">
       {
-        layout.map(rowArr => {
-          return rowArr.map((item, index) => (
-            <Square key={index}
+        layout.map((rowArr, rowIndex) => {
+          return rowArr.map((item, columnIndex) => (
+            <Square key={columnIndex}
                     name={item ? item.name : null}
                     id={item ? item.id : null}
                     handleClick={handleClick}
@@ -18,6 +18,7 @@ function Board (props) {
                     startPos={startPos}
                     moveToPos={moveToPos}
                     layout={layout}
+                    index={[rowIndex, columnIndex]}
             />
           ))
         })

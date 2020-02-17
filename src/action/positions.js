@@ -1,7 +1,5 @@
 import * as types from './constants'
 
-console.log('types:', types)
-
 /**
  * 设置 滑动时的 开始坐标
  * @param startPos
