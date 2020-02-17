@@ -11,6 +11,8 @@ function layoutHistory (state = initialLayoutHistory, action) {
       return [...state, action.layout]
     case types.POP_HISTORY:
       return state.slice(0, state.length - 1)
+    case types.CLEAR_HISTORY:
+      return state.slice(0, 1)
     default:
       return state
   }

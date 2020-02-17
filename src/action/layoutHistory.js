@@ -13,3 +13,9 @@ export function popHistory () {
     type: types.POP_HISTORY
   }
 }
+
+export function clearHistory () {
+  return {
+    type: types.CLEAR_HISTORY
+  }
+}

@@ -1,12 +1,11 @@
 import { connect } from 'react-redux'
 import Game from '../components/Game'
 import { setMoveToPos, setStartPos } from '../action/positions'
-import { setLayout } from '../action/layout'
+// import { setLayout } from '../action/layout'
 import { setSuccessful } from '../action/successful'
-import { addHistory, popHistory } from '../action/layoutHistory'
+import { addHistory, clearHistory, popHistory } from '../action/layoutHistory'
 import _ from 'lodash'
 import { getBrotherIndex, getCaoCaoIndices, getIndex } from '../utils'
-import { test } from '../utils/layouts'
 
 const mapStateToProps = state => ({
   layoutHistory: state.layoutHistory,
@@ -275,7 +274,7 @@ function hasSucceed (layout) {
 
 function handleReplay (dispatch) {
   dispatch(setSuccessful(false))
-  dispatch(setLayout(test))
+  dispatch(clearHistory())
 }
 
 function handleGoBack (dispatch) {

@@ -45,7 +45,7 @@ function Game (props) {
       {/*  按钮*/}
       <div className="btns">
         <button onClick={goBack} disabled={layoutHistory.length === 1}>返回上一步</button>
-        <button>重玩</button>
+        <button onClick={replay}>重玩</button>
       </div>
       {/*  通关提示层*/}
       <SucceedMask showModal={successful}
