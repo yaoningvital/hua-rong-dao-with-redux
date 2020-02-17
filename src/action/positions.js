@@ -31,9 +31,9 @@ export function setMoveToPos (moveToPos) {
  * @param moveDirection: left | right | top | bottom
  * @returns {{moveDirection: *, type: string}}
  */
-export function setMoveDirection (moveDirection) {
-  return {
-    type: types.SET_MOVE_DIRECTION,
-    moveDirection
-  }
-}
+// export function setMoveDirection (moveDirection) {
+//   return {
+//     type: types.SET_MOVE_DIRECTION,
+//     moveDirection
+//   }
+// }

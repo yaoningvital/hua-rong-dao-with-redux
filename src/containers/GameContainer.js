@@ -1,20 +1,29 @@
 import { connect } from 'react-redux'
 import Game from '../components/Game'
-import { setMoveDirection, setMoveToPos, setStartPos } from '../action/positions'
+import { setMoveToPos, setStartPos } from '../action/positions'
+import { setLayout } from '../action/layout'
+import _ from 'lodash'
+import { getBrotherIndex, getCaoCaoIndices, getIndex } from '../utils'
 
 const mapStateToProps = state => ({
   layout: state.layout,
   moveStepsNum: state.moveStepsNum,
   startPos: state.startPos,
   moveToPos: state.moveToPos,
-  moveDirection: state.moveDirection,
+  // moveDirection: state.moveDirection,
 })
 
 const mapDispatchToProps = dispatch => ({
   handleClick: (name, id) => handleClick(name, id),
   handleTouchStart: (e, name, id) => handleTouchStart(dispatch, e, name, id),
   handleTouchMove: (e, name, id) => handleTouchMove(dispatch, e, name, id),
-  handleTouchEnd: (e, {name, id, startPos, moveToPos}) => handleTouchEnd(dispatch, e, {name, id, startPos, moveToPos}),
+  handleTouchEnd: (e, {name, id, startPos, moveToPos, layout}) => handleTouchEnd(dispatch, e, {
+    name,
+    id,
+    startPos,
+    moveToPos,
+    layout
+  }),
 })
 
 function handleClick (e, name, id) {
@@ -44,13 +53,7 @@ function handleTouchMove (dispatch, e, name, id) {
   
 }
 
-function handleTouchEnd (dispatch, e, {name, id, startPos, moveToPos}) {
-  // console.log('touchEnd e.targetTouches:', e.targetTouches)
-  // console.log('touchEnd e.targetTouches.length:', e.targetTouches.length)
-  console.log('startPos.pageX:', startPos.pageX)
-  console.log('startPos.pageY:', startPos.pageY)
-  console.log('moveToPos.pageX:', moveToPos.pageX)
-  console.log('moveToPos.pageY:', moveToPos.pageY)
+function handleTouchEnd (dispatch, e, {name, id, startPos, moveToPos, layout}) {
   let moveAxis = null
   let moveDirection = null
   let xDistance = startPos.pageX - moveToPos.pageX
@@ -61,24 +64,188 @@ function handleTouchEnd (dispatch, e, {name, id, startPos, moveToPos}) {
     if (xDistance < -10) { // 往右移
       console.log('往右移')
       moveDirection = 'right'
-      dispatch(setMoveDirection('right'))
     } else if (xDistance > 10) { // 往左移
       console.log('往左移')
       moveDirection = 'left'
-      dispatch(setMoveDirection('left'))
     }
   } else if (moveAxis === 'vertical') { // 垂直方向移动
     if (yDistance < -10) { // 往下移
       console.log('往下移')
       moveDirection = 'bottom'
-      dispatch(setMoveDirection('bottom'))
     } else if (yDistance > 10) { // 往上移
       console.log('往上移')
       moveDirection = 'top'
-      dispatch(setMoveDirection('top'))
     }
   }
   
+  if (moveDirection) {
+    updateLayout(dispatch, layout, name, id, moveDirection)
+  }
+}
+
+/**
+ * 更新layout
+ * @param oldLayout: 老的layout
+ * @param name: 目标滑块名称
+ * @param id：目标滑块id
+ * @param moveDirection: 滑动方向
+ */
+function updateLayout (dispatch, oldLayout, name, id, moveDirection) {
+  let newLayout = _.cloneDeep(oldLayout)
+  let [tRowIndex, tColumnIndex] = getIndex(newLayout, name, id) // 滑动的这个块 所在的索引
+  
+  // 移动的是 竖向的 两格 角色
+  if (name === 'zhangfei' || name === 'machao' || name === 'huangzhong' || name === 'zhaoyun') {
+    let [bRowIndex, bColumnIndex] = getBrotherIndex(newLayout, name, id) // 滑动块的 兄弟块 所在的索引
+    if (moveDirection === 'left') { // 要向左移动
+      if (tColumnIndex - 1 >= 0 &&
+        newLayout[tRowIndex][tColumnIndex - 1] === null &&
+        newLayout[bRowIndex][bColumnIndex - 1] === null) { // 可以往左移动
+        newLayout[tRowIndex][tColumnIndex - 1] = _.cloneDeep(newLayout[tRowIndex][tColumnIndex])
+        newLayout[bRowIndex][bColumnIndex - 1] = _.cloneDeep(newLayout[bRowIndex][bColumnIndex])
+        newLayout[tRowIndex][tColumnIndex] = null
+        newLayout[bRowIndex][bColumnIndex] = null
+      }
+    } else if (moveDirection === 'right') { // 要向右移动
+      if (tColumnIndex + 1 <= 3 &&
+        newLayout[tRowIndex][tColumnIndex + 1] === null &&
+        newLayout[bRowIndex][bColumnIndex + 1] === null) { // 可以往右移动
+        newLayout[tRowIndex][tColumnIndex + 1] = _.cloneDeep(newLayout[tRowIndex][tColumnIndex])
+        newLayout[bRowIndex][bColumnIndex + 1] = _.cloneDeep(newLayout[bRowIndex][bColumnIndex])
+        newLayout[tRowIndex][tColumnIndex] = null
+        newLayout[bRowIndex][bColumnIndex] = null
+      }
+    } else if (moveDirection === 'top') { // 要向上移动
+      if (Math.min(tRowIndex, bRowIndex) - 1 >= 0 &&
+        newLayout[Math.min(tRowIndex, bRowIndex) - 1][tColumnIndex] === null) { // 可以向上移动
+        newLayout[Math.min(tRowIndex, bRowIndex) - 1][tColumnIndex] = _.cloneDeep(newLayout[Math.min(tRowIndex, bRowIndex)][tColumnIndex])
+        newLayout[Math.min(tRowIndex, bRowIndex)][tColumnIndex] = _.cloneDeep(newLayout[Math.max(tRowIndex, bRowIndex)][tColumnIndex])
+        newLayout[Math.max(tRowIndex, bRowIndex)][tColumnIndex] = null
+      }
+    } else if (moveDirection === 'bottom') { // 要向下移动
+      if (Math.max(tRowIndex, bRowIndex) + 1 <= 4 &&
+        newLayout[Math.max(tRowIndex, bRowIndex) + 1][tColumnIndex] === null) { // 可以向下移动
+        newLayout[Math.max(tRowIndex, bRowIndex) + 1][tColumnIndex] = _.cloneDeep(newLayout[Math.max(tRowIndex, bRowIndex)][tColumnIndex])
+        newLayout[Math.max(tRowIndex, bRowIndex)][tColumnIndex] = _.cloneDeep(newLayout[Math.min(tRowIndex, bRowIndex)][tColumnIndex])
+        newLayout[Math.min(tRowIndex, bRowIndex)][tColumnIndex] = null
+      }
+    }
+  }
+  // 移动的是 横向的 两格角色（关羽）
+  else if (name === 'guanyu') {
+    let [bRowIndex, bColumnIndex] = getBrotherIndex(newLayout, name, id) // 滑动块的 兄弟块 所在的索引
+    if (moveDirection === 'left') {
+      if (Math.min(tColumnIndex, bColumnIndex) - 1 >= 0 &&
+        newLayout[tRowIndex][Math.min(tColumnIndex, bColumnIndex) - 1] === null) { // 可以向左移动
+        newLayout[tRowIndex][Math.min(tColumnIndex, bColumnIndex) - 1] = _.cloneDeep(newLayout[tRowIndex][Math.min(tColumnIndex, bColumnIndex)])
+        newLayout[tRowIndex][Math.min(tColumnIndex, bColumnIndex)] = _.cloneDeep(newLayout[tRowIndex][Math.max(tColumnIndex, bColumnIndex)])
+        newLayout[tRowIndex][Math.max(tColumnIndex, bColumnIndex)] = null
+      }
+    } else if (moveDirection === 'right') {
+      if (Math.max(tColumnIndex, bColumnIndex) + 1 <= 3 &&
+        newLayout[tRowIndex][Math.max(tColumnIndex, bColumnIndex) + 1] === null) { // 可以向右移动
+        newLayout[tRowIndex][Math.max(tColumnIndex, bColumnIndex) + 1] = _.cloneDeep(newLayout[tRowIndex][Math.max(tColumnIndex, bColumnIndex)])
+        newLayout[tRowIndex][Math.max(tColumnIndex, bColumnIndex)] = _.cloneDeep(newLayout[tRowIndex][Math.min(tColumnIndex, bColumnIndex)])
+        newLayout[tRowIndex][Math.min(tColumnIndex, bColumnIndex)] = null
+      }
+    } else if (moveDirection === 'top') {
+      if (tRowIndex - 1 >= 0 &&
+        newLayout[tRowIndex - 1][tColumnIndex] === null &&
+        newLayout[bRowIndex - 1][bColumnIndex] === null) { // 可以向上移动
+        newLayout[tRowIndex - 1][tColumnIndex] = _.cloneDeep(newLayout[tRowIndex][tColumnIndex])
+        newLayout[bRowIndex - 1][bColumnIndex] = _.cloneDeep(newLayout[bRowIndex][bColumnIndex])
+        newLayout[tRowIndex][tColumnIndex] = null
+        newLayout[bRowIndex][bColumnIndex] = null
+      }
+    } else if (moveDirection === 'bottom') {
+      if (tRowIndex + 1 <= 4 &&
+        newLayout[tRowIndex + 1][tColumnIndex] === null &&
+        newLayout[bRowIndex + 1][bColumnIndex] === null) { // 可以向下移动
+        newLayout[tRowIndex + 1][tColumnIndex] = _.cloneDeep(newLayout[tRowIndex][tColumnIndex])
+        newLayout[bRowIndex + 1][bColumnIndex] = _.cloneDeep(newLayout[bRowIndex][bColumnIndex])
+        newLayout[tRowIndex][tColumnIndex] = null
+        newLayout[bRowIndex][bColumnIndex] = null
+      }
+    }
+  }
+  // 移动的是 曹操
+  else if (name === 'caocao') {
+    let caoCaoIndices = getCaoCaoIndices(newLayout)
+    if (moveDirection === 'left') {
+      if (caoCaoIndices[0][1] - 1 >= 0 &&
+        newLayout[caoCaoIndices[0][0]][caoCaoIndices[0][1] - 1] === null &&
+        newLayout[caoCaoIndices[2][0]][caoCaoIndices[2][1] - 1] === null) { // 可以向左移动
+        newLayout[caoCaoIndices[0][0]][caoCaoIndices[0][1] - 1] = _.cloneDeep(newLayout[caoCaoIndices[0][0]][caoCaoIndices[0][1]])
+        newLayout[caoCaoIndices[2][0]][caoCaoIndices[2][1] - 1] = _.cloneDeep(newLayout[caoCaoIndices[2][0]][caoCaoIndices[2][1]])
+        newLayout[caoCaoIndices[0][0]][caoCaoIndices[0][1]] = _.cloneDeep(newLayout[caoCaoIndices[1][0]][caoCaoIndices[1][1]])
+        newLayout[caoCaoIndices[2][0]][caoCaoIndices[2][1]] = _.cloneDeep(newLayout[caoCaoIndices[3][0]][caoCaoIndices[3][1]])
+        newLayout[caoCaoIndices[1][0]][caoCaoIndices[1][1]] = null
+        newLayout[caoCaoIndices[3][0]][caoCaoIndices[3][1]] = null
+      }
+    } else if (moveDirection === 'right') {
+      if (caoCaoIndices[1][1] + 1 <= 3 &&
+        newLayout[caoCaoIndices[1][0]][caoCaoIndices[1][1] + 1] === null &&
+        newLayout[caoCaoIndices[3][0]][caoCaoIndices[3][1] + 1] === null) { // 可以向右移动
+        newLayout[caoCaoIndices[1][0]][caoCaoIndices[1][1] + 1] = _.cloneDeep(newLayout[caoCaoIndices[1][0]][caoCaoIndices[1][1]])
+        newLayout[caoCaoIndices[3][0]][caoCaoIndices[3][1] + 1] = _.cloneDeep(newLayout[caoCaoIndices[3][0]][caoCaoIndices[3][1]])
+        newLayout[caoCaoIndices[1][0]][caoCaoIndices[1][1]] = _.cloneDeep(newLayout[caoCaoIndices[0][0]][caoCaoIndices[0][1]])
+        newLayout[caoCaoIndices[3][0]][caoCaoIndices[3][1]] = _.cloneDeep(newLayout[caoCaoIndices[2][0]][caoCaoIndices[2][1]])
+      }
+    } else if (moveDirection === 'top') {
+      if (caoCaoIndices[0][0] - 1 >= 0 &&
+        newLayout[caoCaoIndices[0][0] - 1][caoCaoIndices[0][1]] === null &&
+        newLayout[caoCaoIndices[1][0] - 1][caoCaoIndices[1][1]] === null) { // 可以向上移动
+        newLayout[caoCaoIndices[0][0] - 1][caoCaoIndices[0][1]] = _.cloneDeep(newLayout[caoCaoIndices[0][0]][caoCaoIndices[0][1]])
+        newLayout[caoCaoIndices[1][0] - 1][caoCaoIndices[1][1]] = _.cloneDeep(newLayout[caoCaoIndices[1][0]][caoCaoIndices[1][1]])
+        newLayout[caoCaoIndices[0][0]][caoCaoIndices[0][1]] = _.cloneDeep(newLayout[caoCaoIndices[2][0]][caoCaoIndices[2][1]])
+        newLayout[caoCaoIndices[1][0]][caoCaoIndices[1][1]] = _.cloneDeep(newLayout[caoCaoIndices[3][0]][caoCaoIndices[3][1]])
+        newLayout[caoCaoIndices[2][0]][caoCaoIndices[2][1]] = null
+        newLayout[caoCaoIndices[3][0]][caoCaoIndices[3][1]] = null
+      }
+    } else if (moveDirection === 'bottom') {
+      if (caoCaoIndices[2][0] + 1 <= 4 &&
+        newLayout[caoCaoIndices[2][0] + 1][caoCaoIndices[2][1]] === null &&
+        newLayout[caoCaoIndices[3][0] + 1][caoCaoIndices[3][1]] === null) { // 可以向下移动
+        newLayout[caoCaoIndices[2][0] + 1][caoCaoIndices[2][1]] = _.cloneDeep(newLayout[caoCaoIndices[2][0]][caoCaoIndices[2][1]])
+        newLayout[caoCaoIndices[3][0] + 1][caoCaoIndices[3][1]] = _.cloneDeep(newLayout[caoCaoIndices[3][0]][caoCaoIndices[3][1]])
+        newLayout[caoCaoIndices[2][0]][caoCaoIndices[2][1]] = _.cloneDeep(newLayout[caoCaoIndices[0][0]][caoCaoIndices[0][1]])
+        newLayout[caoCaoIndices[3][0]][caoCaoIndices[3][1]] = _.cloneDeep(newLayout[caoCaoIndices[1][0]][caoCaoIndices[1][1]])
+        newLayout[caoCaoIndices[0][0]][caoCaoIndices[0][1]] = null
+        newLayout[caoCaoIndices[1][0]][caoCaoIndices[1][1]] = null
+      }
+    }
+  }
+  // 移动的是 兵
+  else if (name === 'bing') {
+    if (moveDirection === 'left') {
+      if (tColumnIndex - 1 >= 0 && newLayout[tRowIndex][tColumnIndex - 1] === null) { // 可以向左移动
+        newLayout[tRowIndex][tColumnIndex - 1] = _.cloneDeep(newLayout[tRowIndex][tColumnIndex])
+        newLayout[tRowIndex][tColumnIndex] = null
+      }
+    } else if (moveDirection === 'right') {
+      if (tColumnIndex + 1 <= 3 && newLayout[tRowIndex][tColumnIndex + 1] === null) { // 可以向右移动
+        newLayout[tRowIndex][tColumnIndex + 1] = _.cloneDeep(newLayout[tRowIndex][tColumnIndex])
+        newLayout[tRowIndex][tColumnIndex] = null
+      }
+    } else if (moveDirection === 'top') {
+      console.log('tRowIndex:', tRowIndex)
+      console.log('tColumnIndex:', tColumnIndex)
+      if (tRowIndex - 1 >= 0 && newLayout[tRowIndex - 1][tColumnIndex] === null) { // 可以向上移动
+        console.log('可以向上移动')
+        newLayout[tRowIndex - 1][tColumnIndex] = _.cloneDeep(newLayout[tRowIndex][tColumnIndex])
+        newLayout[tRowIndex][tColumnIndex] = null
+      }
+    } else if (moveDirection === 'bottom') {
+      if (tRowIndex + 1 <= 4 && newLayout[tRowIndex + 1][tColumnIndex] === null) { // 可以向下移动
+        newLayout[tRowIndex + 1][tColumnIndex] = _.cloneDeep(newLayout[tRowIndex][tColumnIndex])
+        newLayout[tRowIndex][tColumnIndex] = null
+      }
+    }
+    
+    
+  }
+  
+  dispatch(setLayout(newLayout))
 }
 
 export default connect(

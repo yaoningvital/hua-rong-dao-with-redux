@@ -1,3 +1,5 @@
+import * as types from '../action/constants'
+
 const initialLayout = [
   [
     {name: 'zhangfei', id: 1},
@@ -25,15 +27,15 @@ const initialLayout = [
   ],
   [
     {name: 'bing', id: 1},
-    {name: 'bing', id: 1},
-    {name: 'bing', id: 1},
-    {name: 'bing', id: 1},
+    {name: 'bing', id: 2},
+    {name: 'bing', id: 3},
+    {name: 'bing', id: 4},
   ]
 ]
 
 function layout (state = initialLayout, action) {
   switch (action.type) {
-    case 'UPDATE_LAYOUT':
+    case types.UPDATE_LAYOUT:
       return action.layout;
     default:
       return state;

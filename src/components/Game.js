@@ -4,7 +4,7 @@ import ExitImg from '../static/images/exit.png'
 import ShengZiImg from '../static/images/shengzi.png'
 
 function Game (props) {
-  let {layout, moveStepsNum, handleClick, handleTouchStart, handleTouchMove, handleTouchEnd, startPos, moveToPos, moveDirection} = props
+  let {layout, moveStepsNum, handleClick, handleTouchStart, handleTouchMove, handleTouchEnd, startPos, moveToPos} = props
   let ExitImgWidth = document.body.clientWidth * 0.76 * 0.5 + 'px'
   
   return (
@@ -29,7 +29,6 @@ function Game (props) {
                handleTouchEnd={handleTouchEnd}
                startPos={startPos}
                moveToPos={moveToPos}
-               moveDirection={moveDirection}
         />
         <img src={ExitImg} alt=""
              className="exit-img"
