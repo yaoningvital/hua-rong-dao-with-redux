@@ -3,13 +3,13 @@ import Game from '../components/Game'
 import { setMoveToPos, setStartPos } from '../action/positions'
 import { setLayout } from '../action/layout'
 import { setSuccessful } from '../action/successful'
+import {addHistory} from '../action/layoutHistory'
 import _ from 'lodash'
 import { getBrotherIndex, getCaoCaoIndices, getIndex } from '../utils'
 import { test } from '../utils/layouts'
 
 const mapStateToProps = state => ({
-  layout: state.layout,
-  moveStepsNum: state.moveStepsNum,
+  layoutHistory: state.layoutHistory,
   startPos: state.startPos,
   moveToPos: state.moveToPos,
   successful: state.successful,
@@ -257,7 +257,7 @@ function updateLayout (dispatch, oldLayout, name, id, moveDirection) {
     
   }
   
-  dispatch(setLayout(newLayout))
+  dispatch(addHistory(newLayout))
   return newLayout
 }
 

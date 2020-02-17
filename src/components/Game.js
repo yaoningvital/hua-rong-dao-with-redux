@@ -6,7 +6,7 @@ import SucceedMask from './SucceedMask'
 
 function Game (props) {
   let {
-    layout, moveStepsNum, handleClick, handleTouchStart,
+    layoutHistory, handleClick, handleTouchStart,
     handleTouchMove, handleTouchEnd, startPos, moveToPos,
     successful, replay
   } = props
@@ -23,11 +23,11 @@ function Game (props) {
       {/*移动步数*/}
       <div className="move-steps-num">
         <h4>移动步数</h4>
-        <span>{moveStepsNum}</span>
+        <span>{layoutHistory.length - 1}</span>
       </div>
       {/*棋盘*/}
       <div className="board-area">
-        <Board layout={layout}
+        <Board layout={layoutHistory[layoutHistory.length - 1]}
                handleClick={handleClick}
                handleTouchStart={handleTouchStart}
                handleTouchMove={handleTouchMove}
@@ -50,6 +50,7 @@ function Game (props) {
       {/*  通关提示层*/}
       <SucceedMask showModal={successful}
                    replay={replay}
+                   stepsNum={layoutHistory.length - 1}
       />
     </div>
   )

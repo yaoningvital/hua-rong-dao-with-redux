@@ -18,7 +18,11 @@ import CaoYing_1 from '../static/images/caoying_bg_1.jpg'
 import CaoYing_2 from '../static/images/caoying_bg_2.jpg'
 
 function Square (props) {
-  let {name, id, handleClick, handleTouchStart, handleTouchMove, handleTouchEnd, startPos, moveToPos, layout, index} = props
+  let {
+    name, id, handleClick, handleTouchStart,
+    handleTouchMove, handleTouchEnd, startPos, moveToPos,
+    layout, index
+  } = props
   let [rowIndex, columnIndex] = index
   let width = (document.body.clientWidth * 0.76) / 4 + 'px'
   let imageSrc = null

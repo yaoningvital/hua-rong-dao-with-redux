@@ -1,4 +1,4 @@
-import * as types from '../action/constants'
+import * as types from '../action/types'
 
 function successful (state = false, action) {
   switch (action.type) {

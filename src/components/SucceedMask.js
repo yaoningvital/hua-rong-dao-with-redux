@@ -25,7 +25,7 @@ function closest (el, selector) {
 
 
 function SucceedMask (props) {
-  let {showModal, replay} = props
+  let {showModal, replay, stepsNum} = props
   return (
     <div className="succeed-mask">
       <Modal
@@ -36,7 +36,7 @@ function SucceedMask (props) {
       >
         <div className="content-wrap">
           <h4>已通关</h4>
-          <p>移动步数：10</p>
+          <p>移动步数：{stepsNum}</p>
           <div className="btns">
             <button onClick={replay}>重玩</button>
             <button>好的</button>

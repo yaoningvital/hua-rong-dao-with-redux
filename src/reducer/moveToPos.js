@@ -1,4 +1,4 @@
-import * as types from '../action/constants'
+import * as types from '../action/types'
 
 const initialMoveToPos = {
   pageX: 0,
