@@ -5,7 +5,11 @@ import ShengZiImg from '../static/images/shengzi.png'
 import SucceedMask from './SucceedMask'
 
 function Game (props) {
-  let {layout, moveStepsNum, handleClick, handleTouchStart, handleTouchMove, handleTouchEnd, startPos, moveToPos, successful} = props
+  let {
+    layout, moveStepsNum, handleClick, handleTouchStart,
+    handleTouchMove, handleTouchEnd, startPos, moveToPos,
+    successful, replay
+  } = props
   let ExitImgWidth = document.body.clientWidth * 0.76 * 0.5 + 'px'
   
   return (
@@ -44,7 +48,9 @@ function Game (props) {
         <button>重玩</button>
       </div>
       {/*  通关提示层*/}
-      <SucceedMask showModal={successful}/>
+      <SucceedMask showModal={successful}
+                   replay={replay}
+      />
     </div>
   )
 }

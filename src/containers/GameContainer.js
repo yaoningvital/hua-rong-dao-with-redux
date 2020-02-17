@@ -5,6 +5,7 @@ import { setLayout } from '../action/layout'
 import { setSuccessful } from '../action/successful'
 import _ from 'lodash'
 import { getBrotherIndex, getCaoCaoIndices, getIndex } from '../utils'
+import { test } from '../utils/layouts'
 
 const mapStateToProps = state => ({
   layout: state.layout,
@@ -25,6 +26,7 @@ const mapDispatchToProps = dispatch => ({
     moveToPos,
     layout
   }),
+  replay: () => handleReplay(dispatch),
 })
 
 function handleClick (e, name, id) {
@@ -268,6 +270,11 @@ function hasSucceed (layout) {
     (layout[3][2] && layout[3][2].name === 'caocao') &&
     (layout[4][1] && layout[4][1].name === 'caocao') &&
     (layout[4][2] && layout[4][2].name === 'caocao')
+}
+
+function handleReplay (dispatch) {
+  dispatch(setSuccessful(false))
+  dispatch(setLayout(test))
 }
 
 export default connect(
