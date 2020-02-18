@@ -21,7 +21,7 @@ function Square (props) {
   let {
     name, id, handleClick, handleTouchStart,
     handleTouchMove, handleTouchEnd, startPos, moveToPos,
-    layout, index
+    layout, index, isShowHowing
   } = props
   let [rowIndex, columnIndex] = index
   let width = (document.body.clientWidth * 0.76) / 4 + 'px'
@@ -78,12 +78,12 @@ function Square (props) {
              height: width,
              display: imageSrc ? 'block' : 'none'
            }}
-           onTouchStart={(e) => handleTouchStart(e, name, id)}
-           onTouchMove={(e) => handleTouchMove(e, name, id)}
+           onTouchStart={(e) => handleTouchStart(e, isShowHowing)}
+           onTouchMove={(e) => handleTouchMove(e, isShowHowing)}
            onTouchEnd={(e) => {
-             handleTouchEnd(e, {name, id, startPos, moveToPos, layout})
+             handleTouchEnd(e, {name, id, startPos, moveToPos, layout, isShowHowing})
            }}
-           onClick={(e) => handleClick(e, name, id)}
+           onClick={(e) => handleClick(e, name, id, isShowHowing)}
       />
     </div>
   )

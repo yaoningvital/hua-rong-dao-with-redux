@@ -1,42 +1,47 @@
 import { connect } from 'react-redux'
 import Game from '../components/Game'
 import { setMoveToPos, setStartPos } from '../action/positions'
-// import { setLayout } from '../action/layout'
 import { setSuccessful } from '../action/successful'
 import { addHistory, clearHistory, popHistory } from '../action/layoutHistory'
+import { setIsShowHowing } from '../action/isShowHowing'
 import _ from 'lodash'
 import { getBrotherIndex, getCaoCaoIndices, getIndex } from '../utils'
+import { hengDaoLiMa, showHowSteps } from '../utils/layouts'
 
 const mapStateToProps = state => ({
   layoutHistory: state.layoutHistory,
   startPos: state.startPos,
   moveToPos: state.moveToPos,
   successful: state.successful,
+  isShowHowing: state.isShowHowing,
 })
 
 const mapDispatchToProps = dispatch => ({
-  handleClick: (name, id) => handleClick(name, id),
-  handleTouchStart: (e, name, id) => handleTouchStart(dispatch, e, name, id),
-  handleTouchMove: (e, name, id) => handleTouchMove(dispatch, e, name, id),
-  handleTouchEnd: (e, {name, id, startPos, moveToPos, layout}) => handleTouchEnd(dispatch, e, {
+  handleClick: (e, name, id, isShowHowing) => handleClick(e, name, id, isShowHowing),
+  handleTouchStart: (e, isShowHowing) => handleTouchStart(dispatch, e, isShowHowing),
+  handleTouchMove: (e, isShowHowing) => handleTouchMove(dispatch, e, isShowHowing),
+  handleTouchEnd: (e, {name, id, startPos, moveToPos, layout, isShowHowing}) => handleTouchEnd(dispatch, e, {
     name,
     id,
     startPos,
     moveToPos,
-    layout
+    layout,
+    isShowHowing,
   }),
   replay: () => handleReplay(dispatch),
   goBack: () => handleGoBack(dispatch),
+  handleShowHow: (layout) => handleShowHow(dispatch, layout),
 })
 
-function handleClick (e, name, id) {
+function handleClick (e, name, id, isShowHowing) {
   console.log('click e:', e)
   console.log('click name:', name)
   console.log('click id:', id)
+  console.log('click isShowHowing:', isShowHowing)
 }
 
-function handleTouchStart (dispatch, e, name, id) {
-  console.log('touchStart')
+function handleTouchStart (dispatch, e, isShowHowing) {
+  if (isShowHowing) return
   let startPos = {
     pageX: e.targetTouches[0].pageX,
     pageY: e.targetTouches[0].pageY,
@@ -45,11 +50,9 @@ function handleTouchStart (dispatch, e, name, id) {
   
 }
 
-function handleTouchMove (dispatch, e, name, id) {
-  console.log('touchMove')
+function handleTouchMove (dispatch, e, isShowHowing) {
+  if (isShowHowing) return
   e.preventDefault()
-  // console.log('touchMove e.targetTouches[0].pageX:', e.targetTouches[0].pageX)
-  // console.log('touchMove e.targetTouches[0].pageY:', e.targetTouches[0].pageY)
   let moveToPos = {
     pageX: e.targetTouches[0].pageX,
     pageY: e.targetTouches[0].pageY,
@@ -58,8 +61,8 @@ function handleTouchMove (dispatch, e, name, id) {
   
 }
 
-function handleTouchEnd (dispatch, e, {name, id, startPos, moveToPos, layout}) {
-  console.log('touchEnd')
+function handleTouchEnd (dispatch, e, {name, id, startPos, moveToPos, layout, isShowHowing}) {
+  if (isShowHowing) return
   let moveAxis = null
   let moveDirection = null
   let xDistance = startPos.pageX - moveToPos.pageX
@@ -68,19 +71,19 @@ function handleTouchEnd (dispatch, e, {name, id, startPos, moveToPos, layout}) {
   
   if (moveAxis === 'horizontal') { // 水平方向滑动
     if (xDistance < -10) { // 往右移
-      console.log('往右移')
+      // console.log('往右移')
       moveDirection = 'right'
     } else if (xDistance > 10) { // 往左移
-      console.log('往左移')
+      // console.log('往左移')
       moveDirection = 'left'
     }
   } else if (moveAxis === 'vertical') { // 垂直方向移动
     // console.log('yDistance:', yDistance)
     if (yDistance < -10) { // 往下移
-      console.log('往下移')
+      // console.log('往下移')
       moveDirection = 'bottom'
     } else if (yDistance > 10) { // 往上移
-      console.log('往上移')
+      // console.log('往上移')
       moveDirection = 'top'
     }
   }
@@ -240,10 +243,10 @@ function updateLayout (dispatch, oldLayout, name, id, moveDirection) {
         newLayout[tRowIndex][tColumnIndex] = null
       }
     } else if (moveDirection === 'top') {
-      console.log('tRowIndex:', tRowIndex)
-      console.log('tColumnIndex:', tColumnIndex)
+      // console.log('tRowIndex:', tRowIndex)
+      // console.log('tColumnIndex:', tColumnIndex)
       if (tRowIndex - 1 >= 0 && newLayout[tRowIndex - 1][tColumnIndex] === null) { // 可以向上移动
-        console.log('可以向上移动')
+        // console.log('可以向上移动')
         newLayout[tRowIndex - 1][tColumnIndex] = _.cloneDeep(newLayout[tRowIndex][tColumnIndex])
         newLayout[tRowIndex][tColumnIndex] = null
       }
@@ -279,6 +282,38 @@ function handleReplay (dispatch) {
 
 function handleGoBack (dispatch) {
   dispatch(popHistory())
+}
+
+// 处理点击“演示”按钮
+function handleShowHow (dispatch) {
+  dispatch(setIsShowHowing(true))
+  dispatch(clearHistory())
+  
+  // for (let i = 0; i < showHowSteps.length; i++) {
+  //
+  //   let {name, id, moveDirection} = showHowSteps[i]
+  //   if (i === 0) {
+  //     layout = hengDaoLiMa
+  //   }
+  //   let t = setTimeout(() => {
+  //     updateLayout(dispatch, layout, name, id, moveDirection)
+  //     clearTimeout(t)
+  //   }, 1000)
+  // }
+  
+  let i = 0;
+  let layout = hengDaoLiMa;
+  
+  let t = setInterval(() => {
+    if (i < showHowSteps.length) {
+      let {name, id, moveDirection} = showHowSteps[i++]
+      layout = updateLayout(dispatch, layout, name, id, moveDirection)
+    } else {
+      clearInterval(t)
+      dispatch(setIsShowHowing(false))
+    }
+    
+  }, 1000)
 }
 
 export default connect(

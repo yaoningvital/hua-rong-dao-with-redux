@@ -35,11 +35,10 @@ function SucceedMask (props) {
         wrapProps={{onTouchStart: onWrapTouchStart}}
       >
         <div className="content-wrap">
-          <h4>已通关</h4>
+          <h4>恭喜！已通关！</h4>
           <p>移动步数：{stepsNum}</p>
           <div className="btns">
             <button onClick={replay}>重玩</button>
-            <button>好的</button>
           </div>
         </div>
       </Modal>

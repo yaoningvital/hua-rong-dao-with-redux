@@ -20,6 +20,18 @@ body {
   background-size: cover;
   position: relative;
 
+  .show-how {
+    position: absolute;
+    top: 20px;
+    left: 30px;
+
+    button {
+      height: 30px;
+      font-size: 16px;
+      border-radius: 8px;
+    }
+  }
+
   .game-name {
     width: 100%;
     display: flex;

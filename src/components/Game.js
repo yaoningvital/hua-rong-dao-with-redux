@@ -8,16 +8,21 @@ function Game (props) {
   let {
     layoutHistory, handleClick, handleTouchStart,
     handleTouchMove, handleTouchEnd, startPos, moveToPos,
-    successful, replay, goBack
+    successful, replay, goBack, handleShowHow,
+    isShowHowing
   } = props
   let ExitImgWidth = document.body.clientWidth * 0.76 * 0.5 + 'px'
   
   return (
     <div className="game">
+      {/*演示*/}
+      <div className="show-how">
+        <button onClick={() => handleShowHow(layoutHistory[layoutHistory.length - 1])} disabled={isShowHowing}>演示
+        </button>
+      </div>
       {/*游戏名称*/}
       <div className="game-name">
-        <img src={ShengZiImg} alt=""
-        />
+        <img src={ShengZiImg} alt=""/>
         <div className="name">华容道</div>
       </div>
       {/*移动步数*/}
@@ -34,6 +39,7 @@ function Game (props) {
                handleTouchEnd={handleTouchEnd}
                startPos={startPos}
                moveToPos={moveToPos}
+               isShowHowing={isShowHowing}
         />
         <img src={ExitImg} alt=""
              className="exit-img"
@@ -44,13 +50,14 @@ function Game (props) {
       </div>
       {/*  按钮*/}
       <div className="btns">
-        <button onClick={goBack} disabled={layoutHistory.length === 1}>返回上一步</button>
-        <button onClick={replay}>重玩</button>
+        <button onClick={goBack} disabled={isShowHowing || layoutHistory.length === 1}>返回上一步</button>
+        <button onClick={replay} disabled={isShowHowing}>重玩</button>
       </div>
       {/*  通关提示层*/}
       <SucceedMask showModal={successful}
                    replay={replay}
                    stepsNum={layoutHistory.length - 1}
+                   isShowHowing={isShowHowing}
       />
     </div>
   )
