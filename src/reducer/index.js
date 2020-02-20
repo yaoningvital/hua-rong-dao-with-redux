@@ -4,6 +4,7 @@ import moveToPos from './moveToPos'
 import successful from './successful'
 import layoutHistory from './layoutHistory'
 import isShowHowing from './isShowHowing'
+import isTouchEvent from './isTouchEvent'
 
 export default combineReducers({
   startPos,
@@ -11,4 +12,5 @@ export default combineReducers({
   successful,
   layoutHistory,
   isShowHowing,
+  isTouchEvent,
 })

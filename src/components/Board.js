@@ -4,7 +4,7 @@ import Square from './Square'
 function Board (props) {
   let {
     layout, handleClick, handleTouchStart, handleTouchMove,
-    handleTouchEnd, startPos, moveToPos, isShowHowing
+    handleTouchEnd, startPos, moveToPos, isShowHowing, isTouchEvent
   } = props
   return (
     <div className="board">
@@ -23,6 +23,7 @@ function Board (props) {
                     layout={layout}
                     index={[rowIndex, columnIndex]}
                     isShowHowing={isShowHowing}
+                    isTouchEvent={isTouchEvent}
             />
           ))
         })

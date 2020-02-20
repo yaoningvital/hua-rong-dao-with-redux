@@ -9,7 +9,7 @@ function Game (props) {
     layoutHistory, handleClick, handleTouchStart,
     handleTouchMove, handleTouchEnd, startPos, moveToPos,
     successful, replay, goBack, handleShowHow,
-    isShowHowing
+    isShowHowing, isTouchEvent
   } = props
   let ExitImgWidth = document.body.clientWidth * 0.76 * 0.5 + 'px'
   
@@ -40,6 +40,7 @@ function Game (props) {
                startPos={startPos}
                moveToPos={moveToPos}
                isShowHowing={isShowHowing}
+               isTouchEvent={isTouchEvent}
         />
         <img src={ExitImg} alt=""
              className="exit-img"
